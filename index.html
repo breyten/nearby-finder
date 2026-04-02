@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Finder - Coffee, Beer & Restaurants</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 to-slate-800 text-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 flex items-center gap-2">
+                <i class="fas fa-map-location-dot text-amber-500"></i>
+                Nearby Finder
+            </h1>
+            <p class="text-gray-400">Find coffee shops, bars, and restaurants near you</p>
+        </div>
+
+        <div class="bg-slate-700 rounded-lg p-6 mb-8 shadow-lg">
+            <div class="mb-6">
+                <h2 class="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wide">What are you looking for?</h2>
+                <div class="flex flex-wrap gap-3">
+                    <button id="coffeeBtn" class="category-btn px-6 py-2 rounded-lg font-medium transition-all duration-200 bg-amber-600 hover:bg-amber-700 text-white shadow-md" data-category="coffee">
+                        <i class="fas fa-mug-hot mr-2"></i>Coffee
+                    </button>
+                    <button id="beerBtn" class="category-btn px-6 py-2 rounded-lg font-medium transition-all duration-200 bg-slate-600 hover:bg-slate-500 text-gray-100" data-category="beer">
+                        <i class="fas fa-beer-mug-empty mr-2"></i>Beer
+                    </button>
+                    <button id="restaurantBtn" class="category-btn px-6 py-2 rounded-lg font-medium transition-all duration-200 bg-slate-600 hover:bg-slate-500 text-gray-100" data-category="restaurant">
+                        <i class="fas fa-utensils mr-2"></i>Restaurants
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="radiusSlider" class="block text-sm font-medium text-gray-300 mb-2">
+                        Search Radius: <span id="radiusValue" class="text-amber-400 font-bold">1</span> km
+                    </label>
+                    <input type="range" id="radiusSlider" min="0.5" max="5" step="0.5" value="1" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <div>
+                    <label for="sortSelect" class="block text-sm font-medium text-gray-300 mb-2">Sort by</label>
+                    <select id="sortSelect" class="w-full px-4 py-2 rounded-lg bg-slate-600 text-white border border-slate-500 focus:border-amber-500 focus:outline-none">
+                        <option value="distance">Distance (Closest)</option>
+                        <option value="relevance">Relevance (Popular)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="openNowToggle" class="w-4 h-4 cursor-pointer">
+                        <span class="ml-2 text-sm font-medium text-gray-300">Open Now</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="statusMsg" class="mb-4 p-4 rounded-lg bg-blue-900 text-blue-100 border border-blue-700 hidden">
+            <i class="fas fa-circle-notch fa-spin mr-2"></i>
+            <span id="statusText">Loading...</span>
+        </div>
+
+        <div id="errorMsg" class="mb-4 p-4 rounded-lg bg-red-900 text-red-100 border border-red-700 hidden">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            <span id="errorText">An error occurred</span>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-200">
+                <span id="resultsTitle">Select a category to search</span>
+                <span id="resultCount" class="text-amber-400 ml-2"></span>
+            </h2>
+            <div id="resultsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="col-span-full p-8 text-center text-gray-400">
+                    <i class="fas fa-search text-4xl mb-3 opacity-50"></i>
+                    <p>Click a category above to start searching</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
