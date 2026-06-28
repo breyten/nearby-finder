@@ -12,7 +12,7 @@ $category = $_GET['category'] ?? '';
 $radius = $_GET['radius'] ?? 5000; // Default 5km
 
 // Replace with your Google Places API key
-$apiKey = 'AIzaSyBekYLbubnfGOYGwnvAO7QQTflGCw8HZk4';
+$apiKey = 'AIzaSyAOy3oNuwPjqNti3hApDGKYkEY3ZYiLz6M';
 
 if ($action === 'search' && $latitude && $longitude && $category) {
     $results = searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey);

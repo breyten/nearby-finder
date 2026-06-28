@@ -234,6 +234,7 @@ header p {
     align-items: center;
     justify-content: center;
     font-size: 3em;
+    overflow: clip;
 }
 
 .result-image.placeholder {
