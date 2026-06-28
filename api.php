@@ -25,18 +25,24 @@ function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey) 
     // Map categories to Google Places types
     $typeMap = [
         'coffee' => 'cafe',
+        'lunch' => 'restaurant'm
         'dinner' => 'restaurant',
         'beer' => 'bar',
         'tourist_attraction' => 'tourist_attraction',
         'atm' => 'atm'
     ];
-
     $type = $typeMap[$category] ?? 'restaurant';
+
+    $keywordMap = [
+        'lunch' => 'lunch'
+    ]
+    $keyword = $keywordMap[$category] ?? '';
 
     $url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' . http_build_query([
         'location' => "{$latitude},{$longitude}",
         'radius' => $radius,
         'type' => $type,
+        'keyword' => $keyword,
         'key' => $apiKey
     ]);
 
