@@ -217,6 +217,7 @@ header p {
     box-shadow: var(--shadow);
     display: grid;
     grid-template-columns: auto 1fr;
+    gap: 1rem;
 }
 
 .result-card:hover {

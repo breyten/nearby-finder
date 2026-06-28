@@ -12,7 +12,7 @@ $category = $_GET['category'] ?? '';
 $radius = $_GET['radius'] ?? 5000; // Default 5km
 
 // Replace with your Google Places API key
-$apiKey = 'YOUR_GOOGLE_PLACES_API_KEY';
+$apiKey = 'AIzaSyBekYLbubnfGOYGwnvAO7QQTflGCw8HZk4';
 
 if ($action === 'search' && $latitude && $longitude && $category) {
     $results = searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey);
@@ -24,15 +24,15 @@ if ($action === 'search' && $latitude && $longitude && $category) {
 function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey) {
     // Map categories to Google Places types
     $typeMap = [
-        'breakfast' => 'breakfast_restaurant',
         'coffee' => 'cafe',
-        'lunch' => 'restaurant',
         'dinner' => 'restaurant',
-        'beer' => 'bar'
+        'beer' => 'bar',
+        'tourist_attraction' => 'tourist_attraction',
+        'atm' => 'atm'
     ];
 
     $type = $typeMap[$category] ?? 'restaurant';
-    
+
     $url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' . http_build_query([
         'location' => "{$latitude},{$longitude}",
         'radius' => $radius,
@@ -42,7 +42,7 @@ function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey) 
 
     // Make the API request
     $response = @file_get_contents($url);
-    
+
     if ($response === false) {
         return ['error' => 'Failed to fetch data from Google Places API'];
     }
