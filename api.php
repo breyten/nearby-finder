@@ -35,7 +35,7 @@ function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey) 
 
     $keywordMap = [
         'lunch' => 'lunch'
-    ]
+    ];
     $keyword = $keywordMap[$category] ?? '';
 
     $url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' . http_build_query([
