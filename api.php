@@ -10,18 +10,19 @@ $latitude = $_GET['lat'] ?? '';
 $longitude = $_GET['lng'] ?? '';
 $category = $_GET['category'] ?? '';
 $radius = $_GET['radius'] ?? 5000; // Default 5km
+$priceFilter = $_GET['price'] ?? ''; // Price levels: comma-separated (1,2,3,4)
 
 // Replace with your Google Places API key
 $apiKey = 'AIzaSyAOy3oNuwPjqNti3hApDGKYkEY3ZYiLz6M';
 
 if ($action === 'search' && $latitude && $longitude && $category) {
-    $results = searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey);
+    $results = searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey, $priceFilter);
     echo json_encode($results);
 } else {
     echo json_encode(['error' => 'Invalid parameters']);
 }
 
-function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey) {
+function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey, $priceFilter) {
     // Map categories to Google Places types
     $typeMap = [
         'coffee' => 'cafe',
@@ -59,9 +60,23 @@ function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey) 
         return ['error' => 'API Error: ' . $data['status']];
     }
 
+    // Parse price filter if provided
+    $allowedPrices = [];
+    if (!empty($priceFilter)) {
+        $allowedPrices = array_map('intval', explode(',', $priceFilter));
+    }
+
     // Process and enhance results
     $results = [];
     foreach ($data['results'] as $place) {
+        // Filter by price level if specified
+        if (!empty($allowedPrices)) {
+            $priceLevel = $place['price_level'] ?? null;
+            if ($priceLevel === null || !in_array($priceLevel, $allowedPrices)) {
+                continue;
+            }
+        }
+
         $results[] = [
             'name' => $place['name'],
             'description' => $place['vicinity'] ?? '',
@@ -70,7 +85,8 @@ function searchNearbyPlaces($latitude, $longitude, $category, $radius, $apiKey) 
             'lng' => $place['geometry']['location']['lng'],
             'placeId' => $place['place_id'],
             'photoUrl' => isset($place['photos'][0]) ? getPhotoUrl($place['photos'][0]['photo_reference'], $apiKey) : '',
-            'isOpen' => $place['opening_hours']['open_now'] ?? null
+            'isOpen' => $place['opening_hours']['open_now'] ?? null,
+            'price_level' => $place['price_level'] ?? null
         ];
     }
 
