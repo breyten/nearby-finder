@@ -5,6 +5,7 @@ class LocationFinder {
         this.currentCategory = 'breakfast';
         this.allResults = [];
         this.currentSortMethod = 'relevance';
+        this.currentPriceFilter = '';
         
         this.initializeEventListeners();
         this.showUserLocation();
@@ -25,6 +26,12 @@ class LocationFinder {
             this.displayResults(this.allResults);
         });
 
+        // Price filter select
+        document.getElementById('priceFilter').addEventListener('change', (e) => {
+            this.currentPriceFilter = e.target.value;
+            this.displayResults(this.allResults);
+        });
+
         // Auto-search when category changes
         document.querySelectorAll('.category-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -32,6 +39,13 @@ class LocationFinder {
                     this.searchLocations();
                 }
             });
+        });
+
+        // Auto-search when radius changes
+        document.getElementById('radiusInput').addEventListener('change', () => {
+            if (this.currentLocation) {
+                this.searchLocations();
+            }
         });
     }
 
@@ -117,6 +131,11 @@ class LocationFinder {
             radius: radius
         });
 
+        // Add price filter if selected
+        if (this.currentPriceFilter) {
+            params.append('price', this.currentPriceFilter);
+        }
+
         fetch(`api.php?${params}`)
             .then(response => response.json())
             .then(data => {
@@ -171,14 +190,28 @@ class LocationFinder {
             return;
         }
 
+        // Apply price filter if set
+        let filteredResults = results;
+        if (this.currentPriceFilter) {
+            const allowedPrices = this.currentPriceFilter.split(',').map(p => parseInt(p));
+            filteredResults = results.filter(result => 
+                result.price_level && allowedPrices.includes(result.price_level)
+            );
+        }
+
         // Sort results based on current sort method
-        const sortedResults = this.sortResults(results);
+        const sortedResults = this.sortResults(filteredResults);
 
         const container = document.getElementById('resultsContainer');
         container.innerHTML = '';
 
         const resultsList = document.createElement('div');
         resultsList.className = 'results-list';
+
+        if (sortedResults.length === 0) {
+            this.displayNoResults();
+            return;
+        }
 
         sortedResults.forEach((result, index) => {
             const card = this.createResultCard(result);
@@ -205,6 +238,16 @@ class LocationFinder {
         }
 
         return sorted;
+    }
+
+    getPriceLabel(priceLevel) {
+        const priceMap = {
+            1: '$',
+            2: '$$',
+            3: '$$$',
+            4: '$$$$'
+        };
+        return priceMap[priceLevel] || 'N/A';
     }
 
     createResultCard(result) {
@@ -268,6 +311,15 @@ class LocationFinder {
             metaDiv.appendChild(ratingDiv);
         }
 
+        // Price level
+        if (result.price_level) {
+            const priceDiv = document.createElement('div');
+            priceDiv.className = 'price-level';
+            priceDiv.title = `Price Level: ${this.getPriceLabel(result.price_level)}`;
+            priceDiv.textContent = `💰 ${this.getPriceLabel(result.price_level)}`;
+            metaDiv.appendChild(priceDiv);
+        }
+
         // Distance
         const distanceDiv = document.createElement('div');
         distanceDiv.className = 'distance';
@@ -293,7 +345,7 @@ class LocationFinder {
 
     displayNoResults() {
         const container = document.getElementById('resultsContainer');
-        container.innerHTML = `<p class="no-results">No results found for ${this.currentCategory} places. Try increasing the search radius.</p>`;
+        container.innerHTML = `<p class="no-results">No results found for ${this.currentCategory} places. Try adjusting the search radius or price filter.</p>`;
     }
 
     showLoading(show) {
